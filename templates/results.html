@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Results</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Results for Anime : {{ anime_title }}</h1>
+        </div>
+        <div class="buttons-container">
+            <a href="/balance" class="balance-button">Balance</a>
+            <a href="/user_investment" class="investment-button">User Investment</a>
+        </div>
+        <div class="line-chart" id="line-chart"></div>
+        <div class="mean-score">
+            <h2>Mean Score: {{ mean_score }}</h2>
+        </div>
+        <div class="form-container">
+            <div class="form-section">
+                <h2>Buy High Popularity</h2>
+                <form action="/buy_high" method="post">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required><br>
+                    <input type="hidden" id="anime_id" name="anime_id" value="{{ anime_id }}">
+                    <input type="hidden" id="anime_title" name="anime_title" value="{{ anime_title }}">
+                    <label for="investing_amount">Investing Amount:</label>
+                    <input type="number" id="investing_amount" name="investing_amount" step="0.01" required><br>
+                    <label for="target">Target:</label>
+                    <input type="text" id="target" name="target" required><br>
+                    <label for="limiter">Limiter:</label>
+                    <input type="text" id="limiter" name="limiter" value=""><br>
+                    <input type="hidden" id="popularity_multiplier" name="popularity_multiplier" value="0.05">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="intraday" name="intraday" value="1">
+                        <label for="intraday">Intraday</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="days15" name="days15" value="1">
+                        <label for="days15">15 Days</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="month1" name="month1" value="1">
+                        <label for="month1">1 Month</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="month3" name="month3" value="1">
+                        <label for="month3">3 Months</label>
+                    </div>
+                    <button type="submit">BUY(HIGH)</button>
+                </form>
+            </div>
+            <div class="form-section">
+                <h2>Buy Low Popularity</h2>
+                <form action="/buy_low" method="post">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required><br>
+                    <input type="hidden" id="anime_id" name="anime_id" value="{{ anime_id }}">
+                    <input type="hidden" id="anime_title" name="anime_title" value="{{ anime_title }}">
+                    <label for="investing_amount">Investing Amount:</label>
+                    <input type="number" id="investing_amount" name="investing_amount" step="0.01" required><br>
+                    <label for="target">Target:</label>
+                    <input type="text" id="target" name="target" required><br>
+                    <label for="limiter">Limiter:</label>
+                    <input type="text" id="limiter" name="limiter" value=""><br>
+                    <input type="hidden" id="popularity_multiplier" name="popularity_multiplier" value="0.05">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="intraday" name="intraday" value="1">
+                        <label for="intraday">Intraday</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="days15" name="days15" value="1">
+                        <label for="days15">15 Days</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="month1" name="month1" value="1">
+                        <label for="month1">1 Month</label>
+                    </div>
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="month3" name="month3" value="1">
+                        <label for="month3">3 Months</label>
+                    </div>
+                    <button type="submit">BUY(LOW)</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <a href="/" class="back-button">Back to Home</a>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        var graphJson = {{ graph_json | safe }};
+        Plotly.react("line-chart", graphJson.data, graphJson.layout);
+    </script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Anime Index</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    text-align: center;
+    color: #007bb2;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    display: inline-block;
+}
+
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+input[type="text"] {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 5px 10px;
+    background-color: #007bb2;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.anime-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.anime-card {
+    width: 200px;
+    height: 400px; /* Increased the height to accommodate the alternative titles */
+    margin: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    transition: transform 0.3s, background-color 0.3s;
+    cursor: pointer;
+    text-align: center;
+}
+
+.anime-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+}
+
+.anime-title {
+    margin: 0;
+    padding: 10px;
+    font-size: 16px;
+    color: #1a1a1a;
+}
+
+.anime-alternative-titles {
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #707070;
+}
+
+.anime-card:hover {
+    transform: translateY(-5px) rotate(-2deg);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.4);
+    background-color: #f7f7f7;
+}
+
+.balance-button,
+.investment-button {
+    padding: 15px 30px;
+    background-color: #007bb2;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+}
+
+.investment-button {
+    background-color: #ff6347;
+}
+
+.balance-button:hover,
+.investment-button:hover {
+    background-color: #00567a;
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Anime Index</h1>
+        <div class="search-container">
+            <form action="/search" method="get">
+                <label for="search">Search by Name:</label>
+                <input type="text" id="search" name="search" placeholder="Enter anime name" required>
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="buttons-container">
+            <a href="/balance" class="balance-button">Balance</a>
+            <a href="/user_investment" class="investment-button">User Investment</a>
+        </div>
+        <div class="sort-container">
+            <label for="sort-select">Sort By:</label>
+            <select id="sort-select" onchange="sortAnimeCards()">
+                <option value="broadcast">Broadcast</option>
+                <option value="score">Score</option>
+                <option value="members">members</option>
+            </select>
+        </div>
+        <div class="anime-cards">
+            {% for anime_data in anime_data_list %}
+            <a href="/results/{{ anime_data.id }}" class="anime-card" data-anime-id="{{ anime_data.id }}">
+                <img src="{{ anime_data.medium_picture }}" alt="{{ anime_data.title }}">
+                <p class="anime-title">{{ anime_data.title }}</p>
+                <p class="anime-alternative-titles">
+                    Synonyms: {{ anime_data.alternative_titles.synonyms|join(', ') }}<br>
+                    English: {{ anime_data.alternative_titles.en }}<br>
+                    Japanese: {{ anime_data.alternative_titles.ja }}
+                </p>
+            </a>
+            {% endfor %}
+        </div>
+        {% if search_results %}
+        <h2>Search Results</h2>
+        <div class="anime-cards">
+            {% for anime_data in search_results %}
+            <a href="/results/{{ anime_data.id }}" class="anime-card" data-anime-id="{{ anime_data.id }}">
+                <img src="{{ anime_data.medium_picture }}" alt="{{ anime_data.title }}">
+                <p class="anime-title">{{ anime_data.title }}</p>
+                <p class="anime-alternative-titles">
+                    Synonyms: {{ anime_data.alternative_titles.synonyms|join(', ') }}<br>
+                    English: {{ anime_data.alternative_titles.en }}<br>
+                    Japanese: {{ anime_data.alternative_titles.ja }}
+                </p>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        function sortAnimeCards() {
+            var sortBy = document.getElementById('sort-select').value;
+            var animeCardsContainer = document.querySelector('.anime-cards');
+            var animeCards = Array.from(animeCardsContainer.children);
+
+            animeCards.sort(function (a, b) {
+                var dataA, dataB;
+
+                switch (sortBy) {
+                    case 'broadcast':
+                        dataA = a.getAttribute('data-broadcast');
+                        dataB = b.getAttribute('data-broadcast');
+                        break;
+                    case 'score':
+                        dataA = parseFloat(a.getAttribute('data-score'));
+                        dataB = parseFloat(b.getAttribute('data-score'));
+                        break;
+                    case 'members':
+                        dataA = parseInt(a.getAttribute('data-members'));
+                        dataB = parseInt(b.getAttribute('data-members'));
+                        break;
+                    default:
+                        return 0;
+                }
+
+                return dataB - dataA;
+            });
+
+            animeCards.forEach(function (card) {
+                animeCardsContainer.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

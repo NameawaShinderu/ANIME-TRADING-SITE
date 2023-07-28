@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Investment</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='user_investment.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+</head>
+<body>
+    <div class="container">
+        <h1>User Investment Data</h1>
+        <div class="user-investment-table">
+            <table>
+                <tr>
+                    <th>Investment Type</th>
+                    <th>Anime ID</th>
+                    <th>Anime Title</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>UPDATED Score</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Target</th>
+                    <th>Limiter</th>
+                    <th>Investing Amount</th>
+                    <th>PL Multiplier</th>
+                    <th>Investment Duration</th>  <!-- Add the new column header -->
+                </tr>
+                {% for user_data in user_investments %}
+                <tr>
+                    <td>{{ user_data["Investment Type"] }}</td>
+                    <td>{{ user_data["Anime ID"] }}</td>
+                    <td>{{ user_data["Anime Title"] }}</td>
+                    <td>{{ user_data["Name"] }}</td>
+                    <td>{{ user_data["Score"] }}</td>
+                    <td>{{ user_data["UPDATED Score"] }}</td>
+                    <td>{{ user_data["Start Date"] }}</td>
+                    <td>{{ user_data["End Date"] }}</td>
+                    <td>{{ user_data["Target"] }}</td>
+                    <td>{{ user_data["Limiter"] }}</td>
+                    <td>${{ user_data["Investing Amount"] }}</td>
+                    <td>{{ user_data["PL Multiplier"] }}</td>
+                    <td>{{ user_data["Investment Duration"] }} days</td>  <!-- Display the duration -->
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="investment-changes">
+            {% if investment_changes %}
+                <h2>Investment Changes</h2>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Anime Title</th>
+                        <th>Investment Type</th>
+                        <th>Profit/Loss</th>
+                    </tr>
+                    {% for change in investment_changes %}
+                    <tr>
+                        <td>{{ change["Name"] }}</td>
+                        <td>{{ change["Anime Title"] }}</td>
+                        <td>{{ change["Investment Type"] }}</td>
+                        <td>${{ change["Profit/Loss"] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p>No changes in investments.</p>
+            {% endif %}
+        </div>
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+    <div class="container">
+        <div class="row justify-content-end">
+            <form method="post" action="/reset" class="my-3">
+                <!-- Other form elements -->
+                <button type="submit" class="btn btn-danger">Reset Investments</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

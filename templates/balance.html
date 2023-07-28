@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Balance</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='custom.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='balance.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Balance</h1>
+        <div class="balance-amount">
+            <p>Your current balance: {{ balance_amount }}</p>
+        </div>
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+</body>
+</html>
