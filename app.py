@@ -1336,6 +1336,7 @@ def check_order_status(user_data):
 
     else:
         print("Your order has expired.")
+        remove_user_investment(user_data)
         
     # Update the user_data with the new_amount, profit, and loss values (even if newamount is None)
     user_data["new_amount"] = newamount
@@ -1415,6 +1416,13 @@ def update_user_investments():
     for user_data in user_investments:
         if not user_data["Investing Amount"]:
             # Skip user investment data with an empty "Investing Amount"
+            continue
+
+        # Check if the order has expired and remove it from the user investment table
+        start_date = datetime.strptime(user_data["Start Date"], "%d-%m-%Y")
+        end_date = datetime.strptime(user_data["End Date"], "%d-%m-%Y")
+        if datetime.now() < start_date or datetime.now() > end_date:
+            remove_user_investment(user_data)
             continue
 
         # Convert the "Investing Amount" to a float after ensuring it is not empty
